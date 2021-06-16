@@ -35,9 +35,11 @@ public class Main {
         rdd_records.foreach(item -> {
             System.out.println("* " + item.name);
         });
-
-        // TODO: Get only the rows with year_established >= 1900.
-
-
+        
+        // Get only the rows with year_established >= 1900.
+        JavaRDD<Schema> rdd_year_established_filter = rdd_records.filter(item -> item.getYear_established()>=1990);
+        rdd_year_established_filter.foreach(item -> {
+            System.out.println("* " + item.getName() + "*" + item.getYear_established());
+        });
     }
 }
