@@ -27,7 +27,7 @@ public class Main {
                     // Gson gson = new Gson();
                     // gson.fromJson(line, Record.class);
                     String[] fields = line.split(",");
-                    Schema sd = new Schema(fields[0], fields[1], Integer.parseInt(fields[2]), Float.parseFloat(fields[3]));
+                    Schema sd = new Schema(fields[0], fields[1], fields[2], fields[3]);
                     return sd;
                 });
 
@@ -35,11 +35,11 @@ public class Main {
         rdd_records.foreach(item -> {
             System.out.println("* " + item.name);
         });
-        
+
         // Get only the rows with year_established >= 1900.
-        JavaRDD<Schema> rdd_year_established_filter = rdd_records.filter(item -> item.getYear_established()>=1990);
+        JavaRDD<Schema> rdd_year_established_filter = rdd_records.filter(item -> Integer.parseInt(item.getYear_established())>=1990);
         rdd_year_established_filter.foreach(item -> {
-            System.out.println("* " + item.getName() + "*" + item.getYear_established());
+            System.out.println("* " + item.getName() + "* " + item.getYear_established());
         });
     }
 }
