@@ -3,12 +3,12 @@ import scala.Serializable;
 public class Schema implements Serializable {
     String name;
     String location;
-    Integer year_established;
-    float area;
+    String year_established;
+    String area;
 
     // constructor , getters and setters
 
-    public Schema(String name, String location, Integer year_established, float area){
+    public Schema(String name, String location, String year_established, String area){
         this.name = name;
         this.location = location;
         this.year_established = year_established;
@@ -31,19 +31,19 @@ public class Schema implements Serializable {
         this.location = location;
     }
 
-    public float getArea() {
+    public String getArea() {
         return area;
     }
 
-    public void setArea(float area) {
+    public void setArea(String area) {
         this.area = area;
     }
 
-    public Integer getYear_established() {
+    public String getYear_established() {
         return year_established;
     }
 
-    public void setYear_established(Integer year_established) {
+    public void setYear_established(String year_established) {
         this.year_established = year_established;
     }
 }
