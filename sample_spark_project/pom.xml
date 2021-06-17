@@ -41,6 +41,12 @@
             <artifactId>spark-core_2.12</artifactId>
             <version>3.1.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_2.11</artifactId>
+            <version>2.4.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>
