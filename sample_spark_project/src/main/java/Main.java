@@ -18,7 +18,7 @@ public class Main {
 
         // Print the number of rows in the csv file.
         System.out.println("Number of lines in file = " + data.count());
-        System.out.println("Yayyy all good!!!");
+        System.out.println("Yohoo all good!!!");
 
         // Get the national parks data into JavaRDD<Schema>.
         JavaRDD<Schema> rdd_records = sparkContext.textFile("nationalparks.csv").map(
@@ -37,9 +37,46 @@ public class Main {
         });
 
         // Get only the rows with year_established >= 1900.
-        JavaRDD<Schema> rdd_year_established_filter = rdd_records.filter(item -> Integer.parseInt(item.getYear_established())>=1990);
+        /*
+        Job is failing here and exiting. Reason: Integer.parseInt(item.getYear_established()). TODO: Resolve this.
+        JavaRDD<Schema> rdd_year_established_filter = rdd_records.filter(item -> Integer.parseInt(item.getYear_established()) >= 1990);
         rdd_year_established_filter.foreach(item -> {
-            System.out.println("* " + item.getName() + "* " + item.getYear_established());
+            System.out.println("* " + item.getName() + " * " + item.getYear_established());
+        });
+        */
+
+        List<Order> orders = Arrays.asList(new Order("123", "John"), new Order("456", "Smith"), new Order("789", "Samuel"));
+        List<LineItem> items = Arrays.asList(new LineItem("123", "Pen"), new LineItem("456", "Pencil"));
+
+        JavaRDD<Order> rddOrders = sparkContext.parallelize(orders);
+        JavaRDD<LineItem> rddLineItems = sparkContext.parallelize(items);
+
+        JavaPairRDD<String, Order> pairRddOrders = rddOrders.mapToPair(x -> {
+            return new Tuple2<String, Order>(x.getName(), x);
+        });
+
+        JavaPairRDD<String, LineItem> pairRddLineItems = rddLineItems.mapToPair(x -> {
+            return new Tuple2<String, LineItem>(x.getName(), x);
+        });
+
+        JavaPairRDD<String, Tuple2<Order, LineItem>> joinedRdd = pairRddOrders.join(pairRddLineItems);
+
+
+        joinedRdd.foreach(x -> {
+            Tuple2<Order, LineItem> orderAndLineItems = x._2();
+            System.out.println("Order= " + orderAndLineItems._1().getName() + " "+ orderAndLineItems._1().getLocation()+ " LineItems= " + orderAndLineItems._2().getName() + " "+ orderAndLineItems._2().getLocation());
+            //System.out.println("LineItems= " + orderAndLineItems._2().getName() + " "+ orderAndLineItems._2().getLocation());
+
+            });
+
+        JavaRDD<Integer>  convertAllToOne = joinedRdd.map(x -> 1);
+
+        System.out.println("Ok lets check whether all the values are converted to 1 or not:");
+
+        convertAllToOne.foreach(x ->
+        {
+            System.out.println(x + "\n");
+
         });
     }
 }
