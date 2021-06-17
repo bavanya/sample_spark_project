@@ -29,7 +29,7 @@ public class Main {
         Dataset<Row> csv = sparkSession.read().format("csv").option("header","true").load("nationalparks.csv");
         csv.show();
         
-        //To select
+        //To get Dataset with only selected columns.
         List<String> columns = Arrays.asList("Name", "Location");
         Dataset<Row> csv_selected_columns = csv.selectExpr(convertListToSeq(columns));
         */
