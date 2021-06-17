@@ -19,12 +19,11 @@ public class Main {
     
     public static void main(String[] args) throws IOException {
         
-        /*
-        Alternative way of handling data using spark Dataset.
         SparkSession sparkSession =SparkSession.builder()
                 .master("local")
                 .appName("Spark Session Example")
                 .getOrCreate();
+        JavaSparkContext sparkContext = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
 
         Dataset<Row> csv = sparkSession.read().format("csv").option("header","true").load("nationalparks.csv");
         csv.show();
@@ -32,13 +31,15 @@ public class Main {
         //To get Dataset with only selected columns.
         List<String> columns = Arrays.asList("Name", "Location");
         Dataset<Row> csv_selected_columns = csv.selectExpr(convertListToSeq(columns));
-        */
+        
 
         // Initialize spark session.
+        /* Not required.
         SparkConf sparkConf = new SparkConf()
                 .setAppName("Example Spark App")
                 .setMaster("local[*]");  // Delete this line when submitting to a cluster
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
+        */
 
         // Get the data to JavaRDD<String> from csv file.
         JavaRDD<String> data = sparkContext.textFile("nationalparks.csv");
@@ -103,6 +104,13 @@ public class Main {
         convertAllToOne.foreach(x ->
         {
             System.out.println(x + "\n");
+
+        });
+        
+        JavaRDD<Tuple2<Order, LineItem>> getRows = joinedRdd.map(x -> x._2());
+        getRows.foreach(x ->
+        {
+            System.out.println(x);
 
         });
     }
