@@ -6,6 +6,17 @@ import org.apache.spark.api.java.function.Function;
 
 public class Main {
     public static void main(String[] args) throws IOException {
+        
+        /*
+        Alternative way of handling data using spark Dataset.
+        SparkSession sparkSession =SparkSession.builder()
+                .master("local")
+                .appName("Spark Session Example")
+                .getOrCreate();
+
+        Dataset<Row> csv = sparkSession.read().format("csv").option("header","true").load("nationalparks.csv");
+        csv.show();
+        */
 
         // Initialize spark session.
         SparkConf sparkConf = new SparkConf()
