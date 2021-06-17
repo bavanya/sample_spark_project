@@ -3,8 +3,20 @@ import org.apache.spark.*;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
+import scala.collection.JavaConverters;
+import scala.collection.Seq;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
+    
+    public static Seq<String> convertListToSeq(List<String> inputList) {
+        return JavaConverters.asScalaIteratorConverter(inputList.iterator()).asScala().toSeq();
+    }
+    
     public static void main(String[] args) throws IOException {
         
         /*
@@ -16,6 +28,10 @@ public class Main {
 
         Dataset<Row> csv = sparkSession.read().format("csv").option("header","true").load("nationalparks.csv");
         csv.show();
+        
+        //To select
+        List<String> columns = Arrays.asList("Name", "Location");
+        Dataset<Row> csv_selected_columns = csv.selectExpr(convertListToSeq(columns));
         */
 
         // Initialize spark session.
