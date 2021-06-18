@@ -22,6 +22,7 @@ public class Main {
         SparkSession sparkSession =SparkSession.builder()
                 .master("local")
                 .appName("Spark Session Example")
+                .enableHiveSupport()
                 .getOrCreate();
         JavaSparkContext sparkContext = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
 
