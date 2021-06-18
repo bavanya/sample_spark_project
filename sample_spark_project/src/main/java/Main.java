@@ -32,6 +32,9 @@ public class Main {
         List<String> columns = Arrays.asList("Name", "Location");
         Dataset<Row> csv_selected_columns = csv.selectExpr(convertListToSeq(columns));
         
+        // Working with tuples.
+        JavaRDD<String> stringRDD = sparkContextFromSession.parallelize(Arrays.asList("Hello Spark", "Hello Java"));
+        List<Tuple2<String, Integer>> flatMapToPair = stringRDD.flatMapToPair(s -> Arrays.asList(s.split(" ")).stream() .map(token -> new Tuple2<String, Integer>(token, 1)).collect(Collectors.toList()).iterator()).foldByKey(0,(v1, v2) -> v1+v2).collect();
 
         // Initialize spark session.
         /* Not required.
