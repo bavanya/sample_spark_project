@@ -10,11 +10,61 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+import java.io.Serializable;
+import java.util.stream.Stream;
 
 public class Main {
     
     public static Seq<String> convertListToSeq(List<String> inputList) {
         return JavaConverters.asScalaIteratorConverter(inputList.iterator()).asScala().toSeq();
+    }
+    
+    public static class Movie implements Serializable {
+        @Getter @Setter private Integer movieId;
+        @Getter @Setter private String title;
+        @Getter @Setter private String genre;
+        public Movie()
+        {};
+        public Movie(Integer movieId, String title, String genere ) {
+            super();
+            this.movieId = movieId;
+            this.title = title;
+            this.genre = genere;
+        }
+        /*
+        public Integer getMovieId() {
+            return movieId;
+        }
+        public void setMovieId(Integer movieId ) {
+            this.movieId = movieId ;
+        }
+        public String getTitle() {
+            return title;
+        }
+        public void setTitle(String title ) {
+            this.title = title;
+        }
+        public String getGenere() {
+            return genre;
+        }
+        public void setGenere(String genere ) {
+            this.genre = genere;
+        }
+        */
+        public static Movie parseRating(String str ) {
+            String[] fields = str.split(",");
+            if ( fields . length != 3) {
+                System.out.println("The elements are ::");
+                Stream.of( fields ).forEach(System. out ::println);
+                throw new IllegalArgumentException("Each line must contain 3 fields while the current line has ::" + fields.length );
+            }
+            Integer movieId = Integer.parseInt( fields [0]);
+            String title = fields [1].trim();
+            String genere = fields [2].trim();
+            return new Movie(movieId, title, genere);
+        }
     }
     
     public static void main(String[] args) throws IOException {
@@ -25,7 +75,7 @@ public class Main {
                 .enableHiveSupport()
                 .getOrCreate();
         JavaSparkContext sparkContext = JavaSparkContext.fromSparkContext(sparkSession.sparkContext());
-
+        
         Dataset<Row> csv = sparkSession.read().format("csv").option("header","true").load("nationalparks.csv");
         csv.show();
         
@@ -82,6 +132,17 @@ public class Main {
             System.out.println("* " + item.getName() + " * " + item.getYear_established());
         });
         */
+        // This is how we need to do so we don't get exceptions we get for the above commented code.
+        JavaRDD<Movie> moviesRDD = sparkSession.read().textFile("movies.csv")
+                .javaRDD().filter(str -> !(null == str))
+                .filter(str -> !(str.length()==0))
+                .filter(str -> !str.contains("movieId"))
+                .map(str -> Movie.parseRating(str));
+        //moviesRDD.foreach(m -> System.out.println(m));
+
+        moviesRDD.foreach(item -> {
+            System.out.println("* " + item.getMovieId() + " * " + item.getTitle());
+        });
 
         List<Order> orders = Arrays.asList(new Order("123", "John"), new Order("456", "Smith"), new Order("789", "Samuel"));
         List<LineItem> items = Arrays.asList(new LineItem("123", "Pen"), new LineItem("456", "Pencil"));
