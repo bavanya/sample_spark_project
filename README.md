@@ -6,3 +6,5 @@ An uber jar must be generated which can then be used to run the spark applicatio
 Maven can be used to build the jar file.
 
 The command is: **mvn package**.
+
+Then running the spark application can be done using the commands from: [https://spark.apache.org/docs/latest/submitting-applications.html](https://spark.apache.org/docs/latest/submitting-applications.html).
