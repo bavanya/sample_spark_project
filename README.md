@@ -5,4 +5,4 @@
 An uber jar must be generated which can then be used to run the spark application locally.
 Maven can be used to build the jar file.
 
-The command is: *mvn package*.
+The command is: **mvn package**.
